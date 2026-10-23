@@ -2,6 +2,10 @@
 
 Next.js on Cloudflare Workers (OpenNext) with Cloudflare D1 for scores.
 
+Deployment URL: https://escape-room.case-of-the-missing-innovation.workers.dev
+
+See [deployment status](DEPLOYMENT_STATUS.md) for verification and [the deployment guide](CLOUDFLARE_DEPLOYMENT.md) for setup.
+
 ## Run it locally
 ```
 npm install

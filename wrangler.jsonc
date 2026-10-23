@@ -3,9 +3,17 @@
   "name": "escape-room",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-09-01",
-  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
-  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
-  "observability": { "enabled": true },
+  "compatibility_flags": [
+    "nodejs_compat",
+    "global_fetch_strictly_public"
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "observability": {
+    "enabled": true
+  },
   "vars": {
     "INVESTIGATION_MINUTES": "35",
     "GRACE_MINUTES": "5"
@@ -14,8 +22,9 @@
     {
       "binding": "DB",
       "database_name": "escape-room-db",
-      "database_id": "REPLACE_WITH_YOUR_D1_DATABASE_ID",
+      "database_id": "0e4a00f2-b34e-4a8d-9c13-b5c7347e84f4",
       "migrations_dir": "migrations"
     }
-  ]
+  ],
+  "workers_dev": true
 }

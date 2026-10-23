@@ -172,7 +172,7 @@ Use the actual HTTPS deployment URL:
 
 Use a dedicated staging Worker and separate D1 database for a full rehearsal when possible. If rehearsing in the production database before real play, **Reset all play data** clears every team's scores, attempts, hints and reports, resets the clock and reveal, and keeps the teams. Only use it before the real event, never during it.
 
-Local rehearsal results do not prove the remote deployment is healthy. This document was prepared without deploying to your Cloudflare account.
+Local rehearsal results do not prove the remote deployment is healthy. See `DEPLOYMENT_STATUS.md` for the deployment and verification performed after this guide was written.
 
 ## 9. Create 25 teams and email the captains
 
@@ -261,3 +261,16 @@ npx wrangler tail
 Use the dashboard's Workers and D1 metrics during a rehearsal. Keep the existing polling traffic in mind: active players poll every four seconds and each admin tab polls every five seconds. Verify account limits with your expected number of devices; team count alone is not a capacity test.
 
 A custom domain is optional. Set it up through the Worker's Domains & Routes settings if needed, then test that final hostname before emailing invitations. Keep everyone on the same hostname because browser sessions are tied to it.
+
+## Credentials for this checkout
+
+The production admin password generated during deployment is stored in `.secrets/production.json` on this computer. It is excluded from Git and was uploaded as the `ADMIN_PASSWORD` Worker secret. The local `.dev.vars` password is separate. Keep the private file available to the host; cloning the repository does not retrieve it.
+
+To deploy a newly built bundle while supplying that private secret file:
+
+```bash
+npx opennextjs-cloudflare build
+npx opennextjs-cloudflare deploy --secrets-file .secrets/production.json
+```
+
+For later ordinary deployments, `npm run deploy` preserves the existing secret.
