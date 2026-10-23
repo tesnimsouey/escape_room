@@ -1,0 +1,32 @@
+{
+  "name": "case-of-the-missing-innovation",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
+    "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
+    "db:local": "wrangler d1 migrations apply escape-room-db --local",
+    "db:remote": "wrangler d1 migrations apply escape-room-db --remote",
+    "typecheck": "tsc --noEmit",
+    "db:seed": "node scripts/seed-test-teams.mjs",
+    "test:rules": "node scripts/test-rules.mjs",
+    "test:scenarios": "node scripts/test-scenarios.mjs",
+    "test:team-names": "node scripts/test-team-names.mjs"
+  },
+  "dependencies": {
+    "@opennextjs/cloudflare": "^1.20.13",
+    "next": "16.4.2",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261019.1",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "typescript": "^5.6.0",
+    "wrangler": "^4.148.0"
+  }
+}
