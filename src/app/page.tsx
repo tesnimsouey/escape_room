@@ -32,27 +32,27 @@ function JoinForm() {
     if (r.ok) {
       location.href = "/play";
     } else {
-      setError(d.error ?? "Something went wrong. Try again.");
+      setError(d.error ?? "صارت مشكلة. عاود جرّب.");
     }
-    } catch { setError("Could not connect. Please try again."); }
+    } catch { setError("ما نجّمناش نتّصلوا. عاود جرّب."); }
     finally { setBusy(false); }
   }
 
   return (
     <form onSubmit={submit} className="sheet" style={{ marginTop: 28 }}>
-      <h2>Join your team</h2>
+      <h2>ادخل لفريقك</h2>
       <div className="fields" style={{ borderTop: 0, paddingTop: 0, marginTop: 8 }}>
         <div>
-          <label htmlFor="code">Team code from your organizer</label>
+          <label htmlFor="code">رمز الفريق اللي عطاهولك المنظّم</label>
           <input id="code" value={code} onChange={(e) => setCode(e.target.value.toUpperCase())} placeholder="T01-AB3K" autoCapitalize="characters" autoComplete="off" required />
         </div>
         <div>
-          <label htmlFor="name">Team name (required)</label>
+          <label htmlFor="name">اسم الفريق لازم</label>
           <input id="name" value={name} onChange={(e) => setName(e.target.value)} maxLength={30} autoComplete="off" required aria-describedby="name-help" />
-          <p id="name-help" className="muted" style={{ fontSize: 14, marginTop: 6 }}>Choose your name before the clock starts. To rejoin after it starts, enter your existing team name.</p>
+          <p id="name-help" className="muted" style={{ fontSize: 14, marginTop: 6 }}>اختاروا اسمكم قبل ما يبدا الوقت. باش تعاود تدخل بعد البداية، اكتب نفس اسم فريقك المسجّل.</p>
         </div>
         <div className="row">
-          <button className="btn" disabled={busy || !code.trim() || !name.trim()}>Join the investigation</button>
+          <button className="btn" disabled={busy || !code.trim() || !name.trim()}>ابدا التحقيق</button>
         </div>
         {error && <div className="msg" role="alert">{error}</div>}
       </div>
@@ -63,12 +63,9 @@ function JoinForm() {
 export default function Home() {
   return (
     <main className="wrap onDesk">
-      <p className="muted" style={{ marginTop: 28, marginBottom: 6 }}>Microsoft Club</p>
-      <h1>The Case of the Missing Innovation</h1>
-      <p style={{ maxWidth: 560 }}>
-        The final presentation key has disappeared minutes before the showcase. Work with your team, follow the evidence,
-        and find out who took it.
-      </p>
+      <p className="muted" style={{ marginTop: 28, marginBottom: 6 }}>نادي مايكروسوفت</p>
+      <h1>شوفلي حل وين مشى مفتاح السطح</h1>
+      <p style={{ maxWidth: 560 }}>السهرية جاهزة، أمّا مفتاح السطح ضاع! ادخل مع فريقك، تبّع القرائن وحلّ الألغاز الخمسة في حومة شوفلي حل.</p>
       <Suspense fallback={null}>
         <JoinForm />
       </Suspense>

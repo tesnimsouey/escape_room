@@ -35,7 +35,7 @@ async function post(url: string, body: unknown) {
     const d = (await r.json().catch(() => ({}))) as Record<string, unknown>;
     return { ok: r.ok, data: d };
   } catch {
-    return { ok: false, data: { error: "Connection lost. Your answers are still here. Please try again." } as Record<string, unknown> };
+    return { ok: false, data: { error: "الاتّصال تقطع. إجاباتك ما زالت موجودة. عاود جرّب." } as Record<string, unknown> };
   }
 }
 
@@ -53,12 +53,12 @@ export default function Play() {
       location.href = "/";
       return;
     }
-    if (!r.ok) throw new Error("State unavailable");
+    if (!r.ok) throw new Error("حالة اللعبة موش متوفرة");
     const d = (await r.json()) as GameState;
     setOffset(d.now - Date.now());
     setS(d);
     setError("");
-    } catch { setError("Connection lost. Retrying automatically; your answers are kept."); }
+    } catch { setError("الاتّصال تقطع. نعاودوا نحاولوا وإجاباتك تبقى موجودة."); }
   }, []);
 
   useEffect(() => {
@@ -77,24 +77,24 @@ export default function Play() {
     setTimeout(() => setUnlock(null), 2600);
   }
 
-  if (!s) return <main className="wrap onDesk"><p role="status">{error || "Loading the case file…"}</p></main>;
+  if (!s) return <main className="wrap onDesk"><p role="status">{error || "نحمّلوا ملفّ الحكاية…"}</p></main>;
 
   const now = Date.now() + offset;
   const { phase, investigationEnds, hardEnd } = s.event;
-  let clock = "Waiting";
-  let clockNote = "Host will start the clock";
+  let clock = "نستناو";
+  let clockNote = "المضيف باش يشغّل الوقت";
   let low = false;
   if (phase === "investigation" && investigationEnds) {
     clock = mmss(investigationEnds - now);
-    clockNote = "Investigation time left";
+    clockNote = "باقي في وقت البحث";
     low = investigationEnds - now < 5 * 60_000;
   } else if (phase === "final" && hardEnd) {
     clock = mmss(hardEnd - now);
-    clockNote = "Final submissions close";
+    clockNote = "باقي قبل ما يتسكّر الإرسال";
     low = true;
   } else if (phase === "closed") {
-    clock = "Closed";
-    clockNote = "No more submissions";
+    clock = "تسكّر";
+    clockNote = "ما عادش يتقبل الإرسال";
   }
 
   const open = phase === "investigation" || phase === "final";
@@ -107,7 +107,7 @@ export default function Play() {
         <div className="in">
           <div className="team">
             {s.team.name}
-            <small>Score {s.score.total}</small>
+            <small>النقاط {s.score.total}</small>
           </div>
           <div className={`clock${low ? " low" : ""}`} aria-live="off">
             {clock}
@@ -118,45 +118,45 @@ export default function Play() {
 
       <main className="wrap onDesk">
         {error && <div className="msg" role="alert">{error}</div>}
-        <div className="rail" aria-label="Envelopes">
+        <div className="rail" aria-label="الظروف">
           {[1, 2, 3, 4, 5].map((n) => (
-            <div key={n} className={`env ${n <= s.solved ? "done" : n === current ? "now" : ""}`} title={`Envelope ${n}`}>
+            <div key={n} className={`env ${n <= s.solved ? "done" : n === current ? "now" : ""}`} title={`الظرف ${n}`}>
               {n}
             </div>
           ))}
-          <div className={`env ${s.stage === "done" ? "done" : s.stage === "report" ? "now" : ""}`}>Report</div>
+          <div className={`env ${s.stage === "done" ? "done" : s.stage === "report" ? "now" : ""}`}>التقرير</div>
         </div>
 
         {s.stage === "lobby" && (
           <section className="sheet">
-            <h2>Case file opens soon</h2>
+            <h2>ملفّ الحكاية باش يتحلّ قريب</h2>
             <p>{s.intro}</p>
-            <p className="muted">You are in as {s.team.name}. This page updates by itself when the host starts the clock.</p>
+            <p className="muted">دخلتوا باسم {s.team.name}. الصفحة تتحدّث وحدها كي المضيف يشغّل الوقت.</p>
           </section>
         )}
 
         {s.stage === "done" && (
           <section className="sheet">
             <div className="row" style={{ justifyContent: "space-between" }}>
-              <h2 style={{ margin: 0 }}>Report submitted</h2>
-              <span className="stamp">Filed</span>
+              <h2 style={{ margin: 0 }}>التقرير تبعث</h2>
+              <span className="stamp">تبعث</span>
             </div>
-            <p style={{ marginTop: 12 }}>Your team is done. Final scores are announced at the end of the event.</p>
+            <p style={{ marginTop: 12 }}>فريقكم كمّل. النتائج النهائية تتعلن في آخر النشاط.</p>
             {s.reveal ? (
               <>
-                <h3>Maya’s note</h3>
+                <h3>رسالة السبوعي</h3>
                 <ul className="note plain"><li>{s.reveal.note}</li></ul>
-                <h3>What the evidence showed</h3>
+                <h3>شنوة ورّاتنا القرائن</h3>
                 <ul>{s.reveal.summary.map((l) => <li key={l}>{l}</li>)}</ul>
               </>
             ) : (
-              <p className="muted">Maya’s note stays sealed until the host reveals it.</p>
+              <p className="muted">رسالة السبوعي تبقى مخبيّة لين المضيف يكشفها.</p>
             )}
           </section>
         )}
 
         {s.stage === "report" && s.report && (
-          <ReportForm fields={s.report.fields} textFields={s.report.textFields} open={open} onDone={() => celebrate("Report filed")} />
+          <ReportForm fields={s.report.fields} textFields={s.report.textFields} open={open} onDone={() => celebrate("التقرير تبعث")} />
         )}
 
         {ordered.map((p) =>
@@ -164,7 +164,7 @@ export default function Play() {
             <details key={p.id} className="sheet">
               <summary>
                 <span>{p.envelope}</span>
-                <span className="stamp">Solved</span>
+                <span className="stamp">تحلّوا</span>
               </summary>
               <Story p={p} />
             </details>
@@ -206,6 +206,15 @@ function Story({ p }: { p: PuzzleState }) {
 }
 
 function BlockView({ b }: { b: Block }) {
+  if (b.type === "table") return <>
+    {b.title && <div className="blockTitle">{b.title}</div>}
+    <div className={b.spatial ? "puzzle-grid-wrap" : "scroll"}>
+      <table className={b.spatial ? "puzzle-grid" : "puzzle-table"}>
+        <thead><tr>{b.headers.map((header,i)=><th key={i} scope="col">{header}</th>)}</tr></thead>
+        <tbody>{b.rows.map((row,i)=><tr key={i}>{row.map((cell,j)=><td key={j}>{/^[٠-٩0-9]+$/.test(cell) ? <bdi dir="ltr">{cell}</bdi> : cell}</td>)}</tr>)}</tbody>
+      </table>
+    </div>
+  </>;
   if (b.type === "callout") return <div className="callout">{b.text}</div>;
   if (b.type === "cards")
     return (
@@ -236,7 +245,7 @@ function BlockView({ b }: { b: Block }) {
   return (
     <>
       {b.title && <div className="blockTitle">{b.title}</div>}
-      <ol className={`note ${b.numbered ? "numbered" : "plain"}`}>{b.lines.map((l) => <li key={l}>{l}</li>)}</ol>
+      <ol className={`note ${b.numbered ? "numbered" : "plain"}`}>{b.lines.map((l, i) => <li key={i}>{l}</li>)}</ol>
       {b.footer && <div className="noteFoot">{b.footer}</div>}
     </>
   );
@@ -275,9 +284,9 @@ function PuzzleForm({
     const { ok, data } = await post("/api/submit", { puzzle: p.id, answers, explanation });
     setBusy(false);
     if (ok && data.ok) {
-      onSolved(p.id < 5 ? `Envelope ${p.id + 1} unlocked` : "All envelopes open");
+      onSolved(p.id < 5 ? `الظرف ${p.id + 1} تحلّ` : "الظروف الكلّ تحلّوا");
     } else {
-      setMsg({ text: String(data.message ?? data.error ?? "Something went wrong.") });
+      setMsg({ text: String(data.message ?? data.error ?? "صارت مشكلة.") });
     }
   }
 
@@ -286,7 +295,7 @@ function PuzzleForm({
     const { ok, data } = await post("/api/hint", { puzzle: p.id });
     setBusy(false);
     setConfirming(false);
-    if (!ok) setMsg({ text: String(data.error ?? "Hint unavailable.") });
+    if (!ok) setMsg({ text: String(data.error ?? "التلميح موش متاح.") });
     onChange();
   }
 
@@ -301,28 +310,28 @@ function PuzzleForm({
           <textarea id="explain" value={explanation} onChange={(e) => setExplanation(e.target.value)} maxLength={600} />
         </div>
         <div className="row">
-          <button className="btn" onClick={submit} disabled={busy || !open}>Check answer</button>
+          <button className="btn" onClick={submit} disabled={busy || !open}>ثبّت الجواب</button>
         </div>
         {msg && <div className={`msg${msg.ok ? " ok" : ""}`} role="alert">{msg.text}</div>}
       </div>
 
       <div className="hints">
         {p.hints.map((h, i) => (
-          <div className="hint" key={i}><strong>Hint {i + 1}.</strong> {h}</div>
+          <div className="hint" key={i}><strong>التلميح {i + 1}.</strong> {h}</div>
         ))}
         {p.hintsUsed < 3 && !confirming && (
           <button className="btn ghost small" onClick={() => setConfirming(true)} disabled={busy || !open}>
-            Get hint {p.hintsUsed + 1} (costs {hintCost} points)
+            اطلب التلميح {p.hintsUsed + 1} (ينقص {hintCost} نقطة)
           </button>
         )}
         {confirming && (
           <div className="row">
-            <span>Spend {hintCost} points on this hint?</span>
-            <button className="btn small" onClick={hint} disabled={busy || !open}>Yes, give me the hint</button>
-            <button className="btn ghost small" onClick={() => setConfirming(false)}>Keep investigating</button>
+            <span>ننقصوا {hintCost} نقطة على التلميح هذا؟</span>
+            <button className="btn small" onClick={hint} disabled={busy || !open}>إي عطيني التلميح</button>
+            <button className="btn ghost small" onClick={() => setConfirming(false)}>نكملوا نلوجوا وحدنا</button>
           </div>
         )}
-        {p.hintsUsed >= 3 && <p className="muted">All three hints used for this puzzle.</p>}
+        {p.hintsUsed >= 3 && <p className="muted">استعملتوا التلميحات الثلاثة متاع هاللغز.</p>}
       </div>
     </>
   );
@@ -346,13 +355,13 @@ function ReportForm({
     setBusy(false);
     setConfirm(false);
     if (ok) onDone();
-    else setMsg(String(data.error ?? "Could not submit the report."));
+    else setMsg(String(data.error ?? "التقرير ما تبعثش."));
   }
 
   return (
     <section className="sheet">
-      <h2>Final case report</h2>
-      <p>All five envelopes are open. Write up what happened. You can submit the report once, so check your answers first.</p>
+      <h2>التقرير الأخير</h2>
+      <p>حلّيتوا الألغاز الخمسة. اكتبوا شنوة صار وراجعوا إجاباتكم مليح؛ التقرير يتبعث مرّة وحدة.</p>
       <div className="fields">
         {fields.map((f) => <FieldInput key={f.key} f={f} value={vals[f.key] ?? ""} onChange={set(f.key)} />)}
         {textFields.map((f) => (
@@ -362,12 +371,12 @@ function ReportForm({
           </div>
         ))}
         {!confirm ? (
-          <div className="row"><button className="btn" onClick={() => setConfirm(true)} disabled={!open}>Review and submit</button></div>
+          <div className="row"><button className="btn" onClick={() => setConfirm(true)} disabled={!open}>راجع وابعث</button></div>
         ) : (
           <div className="row">
-            <span>Submit the final report? It cannot be changed afterwards.</span>
-            <button className="btn small" onClick={send} disabled={busy || !open}>Yes, submit</button>
-            <button className="btn ghost small" onClick={() => setConfirm(false)}>Keep editing</button>
+            <span>نبعثوا التقرير النهائي؟ بعد ما يتبعث ما يتبدّلش.</span>
+            <button className="btn small" onClick={send} disabled={busy || !open}>إي ابعث</button>
+            <button className="btn ghost small" onClick={() => setConfirm(false)}>نكمّل نراجع</button>
           </div>
         )}
         {msg && <div className="msg" role="alert">{msg}</div>}

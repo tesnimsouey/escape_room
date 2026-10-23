@@ -190,3 +190,27 @@ input, select, textarea { color-scheme: light; min-width: 0; }
   details.sheet > summary { flex-wrap: wrap; }
   .row > .btn { flex: 1 1 auto; }
 }
+
+/* Tunisian Arabic uses the same paper-and-desk UI with logical RTL spacing. */
+:root { --type: "Noto Naskh Arabic", serif; --ui: "Noto Sans Arabic", system-ui, sans-serif; }
+html { direction: rtl; }
+.tbl th, .tbl td { text-align: start; }
+.clock { text-align: end; }
+.clock, .event-clock-value { font-variant-numeric: tabular-nums; }
+.card { border-left: 1px solid var(--line); border-right: 6px solid var(--tag); }
+.callout { border-left: 0; border-right: 6px solid var(--mark); }
+.stmts li { border-left: 1px solid var(--line); border-right: 6px solid var(--tag); }
+.msg { border-left: 0; border-right: 6px solid var(--red); }
+.msg.ok { border-right-color: var(--ok); }
+.hint { border-left: 0; border-right: 6px solid var(--tag); }
+.puzzle-table, .puzzle-grid { width: 100%; border-collapse: collapse; margin-block: 10px 18px; }
+.puzzle-table th, .puzzle-table td, .puzzle-grid th, .puzzle-grid td { border: 1px solid var(--line); padding: 10px; text-align: start; }
+.puzzle-table th, .puzzle-grid th { background: #dce7ee; }
+.puzzle-grid { table-layout: fixed; }
+.puzzle-grid td { height: 72px; text-align: center; font-weight: 600; overflow-wrap: anywhere; background: var(--card); }
+.puzzle-grid th { font-size: 14px; text-align: center; }
+.puzzle-grid-wrap { max-width: 100%; }
+@media (max-width:480px) {
+  .puzzle-grid th, .puzzle-grid td { padding: 7px 4px; font-size: 13px; }
+  .puzzle-table { font-size: 14px; }
+}

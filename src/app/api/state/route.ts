@@ -6,7 +6,7 @@ import { getEnv, getEvent, json, phaseOf, summaries, teamFromRequest } from "@/l
 export async function GET(req: NextRequest) {
   const env = await getEnv();
   const team = await teamFromRequest(req, env);
-  if (!team) return json({ error: "not_joined" }, 401);
+  if (!team) return json({ error: "يلزم تدخل لفريقك." }, 401);
 
   const now = Date.now();
   const ev = await getEvent(env);

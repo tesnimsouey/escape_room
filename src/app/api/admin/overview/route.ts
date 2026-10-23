@@ -3,7 +3,7 @@ import { getEnv, getEvent, isAdmin, json, phaseOf, rank, summaries } from "@/lib
 
 export async function GET(req: NextRequest) {
   const env = await getEnv();
-  if (!(await isAdmin(req, env))) return json({ error: "unauthorized" }, 401);
+  if (!(await isAdmin(req, env))) return json({ error: "يلزم دخول المضيف." }, 401);
 
   const now = Date.now();
   const ev = await getEvent(env);

@@ -22,11 +22,11 @@ export function EventClock({ event, serverNow }: { event: ClockEvent; serverNow:
   const closed = event.locked || event.phase === "closed" || (event.hardEnd !== null && now >= event.hardEnd);
   const waiting = event.phase === "lobby" && !closed;
   const final = !!event.investigationEnds && now >= event.investigationEnds;
-  const label = waiting ? "Waiting to start" : closed ? "Submissions closed" : final ? "Final submission time left" : "Investigation time left";
+  const label = waiting ? "نستناو البداية" : closed ? "الإرسال مسكّر" : final ? "باقي في المهلة الأخيرة" : "باقي في وقت البحث";
   const display = waiting ? "—:—" : `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}`;
   return <div className={`event-clock${!waiting && !closed && remaining < 300 ? " low" : ""}`}>
     <span className="event-clock-label">{label}</span>
     <span className="event-clock-value" role="timer" aria-label={label} aria-live="off">{display}</span>
-    <small>{waiting ? "The host starts the clock for every team." : event.locked ? "Locked by host · clock continues" : closed ? "The event time has ended." : final ? "Final submissions are open." : "Then final submission time begins."}</small>
+    <small>{waiting ? "المضيف يشغّل الوقت للفرق الكلّ." : event.locked ? "المضيف سكّر الإرسال والوقت ما زال يدور" : closed ? "وقت اللعب وفى." : final ? "المهلة الأخيرة ما زالت محلولة." : "بعدها تبدا المهلة الأخيرة."}</small>
   </div>;
 }

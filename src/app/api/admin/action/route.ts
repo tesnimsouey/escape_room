@@ -10,7 +10,7 @@ function randomCode(len: number): string {
 
 export async function POST(req: NextRequest) {
   const env = await getEnv();
-  if (!(await isAdmin(req, env))) return json({ error: "unauthorized" }, 401);
+  if (!(await isAdmin(req, env))) return json({ error: "يلزم دخول المضيف." }, 401);
 
   const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
   const action = String(body?.action ?? "");
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
         const n = start + i + 1;
         return db
           .prepare("INSERT INTO teams (code, token, name, variant, created_at) VALUES (?, ?, ?, ?, ?)")
-          .bind(`T${String(n).padStart(2, "0")}-${randomCode(4)}`, crypto.randomUUID(), `Team ${n}`, ["A", "B", "C"][(n - 1) % 3], now);
+          .bind(`T${String(n).padStart(2, "0")}-${randomCode(4)}`, crypto.randomUUID(), `فريق ${n}`, ["A", "B", "C"][(n - 1) % 3], now);
       });
       await db.batch(stmts);
       break;
@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       const { name, error } = validateTeamName(body?.name);
       if (error) return json({ error }, 400);
       const existing = await db.prepare("SELECT id FROM teams WHERE id = ?").bind(Number(body?.teamId)).first();
-      if (!existing) return json({ error: "Team not found." }, 404);
+      if (!existing) return json({ error: "الفريق موش موجود." }, 404);
       await db.prepare("UPDATE teams SET name = ? WHERE id = ?").bind(name, Number(body?.teamId)).run();
       break;
     }
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
       const teamId = Number(body?.teamId);
       const item = String(body?.item ?? "");
       const row = await db.prepare("SELECT max_points AS m FROM graded WHERE team_id = ? AND item = ?").bind(teamId, item).first<{ m: number }>();
-      if (!row) return json({ error: "Item not found." }, 404);
+      if (!row) return json({ error: "الإجابة موش موجودة." }, 404);
       const raw = body?.points;
       const pts = raw === null || raw === "" ? null : Math.max(0, Math.min(row.m, Math.round(Number(raw) || 0)));
       await db.prepare("UPDATE graded SET admin_points = ? WHERE team_id = ? AND item = ?").bind(pts, teamId, item).run();
@@ -78,7 +78,7 @@ export async function POST(req: NextRequest) {
       break;
     }
     default:
-      return json({ error: "Unknown action." }, 400);
+      return json({ error: "الطلب هذا موش معروف." }, 400);
   }
   return json({ ok: true });
 }

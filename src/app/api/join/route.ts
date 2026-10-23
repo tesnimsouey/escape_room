@@ -6,16 +6,16 @@ export async function POST(req: NextRequest) {
   const body = await readJson(req);
   const code = String(body.code ?? "").trim().toUpperCase();
   const { name, error } = validateTeamName(body.name);
-  if (!code) return json({ error: "Enter your team code." }, 400);
+  if (!code) return json({ error: "اكتب رمز فريقك." }, 400);
   if (error) return json({ error }, 400);
 
   const env = await getEnv();
   const team = await env.DB.prepare("SELECT * FROM teams WHERE code = ?").bind(code).first<TeamRow>();
-  if (!team) return json({ error: "That code does not match a team. Check it and try again." }, 404);
+  if (!team) return json({ error: "الرمز هذا ما يوافق حتى فريق. ثبّت فيه وعاود جرّب." }, 404);
 
   // Teams may choose a display name until the clock starts.
   const ev = await getEvent(env);
-  if (ev.started_at && name !== team.name) return json({ error: "The clock has started. Enter your team’s existing name to rejoin." }, 409);
+  if (ev.started_at && name !== team.name) return json({ error: "الوقت بدا. باش تعاود تدخل، اكتب نفس اسم فريقك المسجّل." }, 409);
   if (!ev.started_at) {
     await env.DB.prepare("UPDATE teams SET name = ? WHERE id = ?").bind(name, team.id).run();
   }

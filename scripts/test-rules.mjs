@@ -26,3 +26,28 @@ const d={id:4,total:99,finished_at:50,reason_pts:40};
 assert.deepEqual(rank([b,a,d,c]).map(t=>t.id),[3,1,2,4]);
 assert.deepEqual(rank([{...a,finished_at:null},b]).map(t=>t.id),[2,1]);
 console.log('9 timer-boundary and ranking checks passed.');
+
+const { PUZZLE_KEYS, REPORT_FIELD_CHECKS } = load('keys');
+const { getPuzzle } = load('content');
+const { normTime } = load('grade');
+assert.equal(normTime('١٨:٢٠'), '18:20');
+assert.equal(normTime('۱۸:۱۲'), '18:12');
+assert.equal(normTime('18:99'), '');
+assert.ok(PUZZLE_KEYS[2].check({word:'الأزرق'}));
+assert.ok(PUZZLE_KEYS[5].check({code:'٣٧١'}));
+assert.ok(!PUZZLE_KEYS[5].check({code:'٣١٧'}));
+assert.ok(REPORT_FIELD_CHECKS.who('السبوعي'));
+const grid = getPuzzle(4,'A').blocks.find(b=>b.type==='table');
+for(const variant of ['B','C']) assert.deepEqual(getPuzzle(4,variant).blocks.find(b=>b.type==='table').rows,grid.rows);
+let row=0,col=0;
+for(const [dr,dc] of [[1,0],[0,1],[1,0],[0,1],[-1,0]]) { row+=dr; col+=dc; }
+assert.equal(grid.rows[row][col],'خزانة الكوجينة');
+const clues=[['401',1,1],['427',1,0],['134',2,0],['650',0,0],['603',1,0]];
+const solutions=[];
+for(let n=0;n<1000;n++) {
+ const code=String(n).padStart(3,'0');
+ if(new Set(code).size!==3) continue;
+ if(clues.every(([guess,present,placed])=>[...guess].filter(c=>code.includes(c)).length===present && [...guess].filter((c,i)=>code[i]===c).length===placed)) solutions.push(code);
+}
+assert.deepEqual(solutions,['371']);
+console.log('Arabic normalization, fixed RTL map and unique lock solution checks passed.');

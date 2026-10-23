@@ -1,153 +1,44 @@
-// SERVER ONLY. Never import this file from a client component.
-// It holds the answers, the hints and the reveal text.
-
-import { hasAny, normKey, normLetters, normTime, normText } from "./grade";
-
-export const HINT_COST = 15;
-export const ANSWER_POINTS = 60; // per puzzle, for the correct answer
-export const REASON_POINTS = 40; // per puzzle, for the written explanation
-export const FIELD_POINTS = 12; // per structured report field (6 fields)
-export const REPORT_TEXT_POINTS = 14; // per written report answer (2 answers)
-export const VERIFY_POINTS = 50;
-
-export type Answers = Record<string, string>;
-
-// A rubric is a list of keyword groups. A group is matched when ANY keyword appears.
-export type Rubric = string[][];
-
-interface PuzzleKey {
-  check: (a: Answers) => boolean;
-  rubric: Rubric;
-  hints: [string, string, string];
-}
-
-const NOT_COUNTED = [
-  "not counted", "not individually", "didn't count", "did not count", "never counted",
-  "nobody counted", "no one counted", "wasn't counted", "was not counted", "not checked",
-  "didn't check", "did not check", "weren't counted", "were not counted", "no count",
-];
-
-export const PUZZLE_KEYS: Record<number, PuzzleKey> = {
-  1: {
-    check: (a) => normTime(a.check) === "10:20" && normTime(a.sighting) === "10:12",
-    rubric: [
-      ["10:20", "1020", "room check", "room-check", "signed", "signature", "sheet"],
-      NOT_COUNTED,
-      ["10:12", "1012", "sighting", "saw", "seen", "physically", "see"],
-    ],
-    hints: [
-      "Sort the cards by timestamp first.",
-      "Keep the room-check time separate from a confirmed sighting.",
-      "Which card explicitly says someone physically saw the key?",
-    ],
-  },
-  2: {
-    check: (a) => normLetters(a.word) === "BLUE",
-    rubric: [
-      ["unsigned", "no signature", "not signed", "anonymous", "no name", "no named", "unnamed", "nobody signed", "no one signed", "didn't sign", "did not sign"],
-      ["witness", "source", "evidence", "proof", "saw", "observation", "verified", "record", "reliable", "hearsay", "unsupported", "claim"],
-      ["not prove", "doesn't prove", "does not prove", "cannot prove", "can't prove", "no proof", "isn't proof", "is not proof", "unsupported", "unverified", "rumor", "rumour", "just a claim", "only a claim"],
-    ],
-    hints: [
-      "Apply the evidence standard printed on the card.",
-      "A source can be reliable about one fact without proving another.",
-      "Put the four supported cards in time order and read their letters.",
-    ],
-  },
-  3: {
-    check: (a) =>
-      normText(a.nora) === "entrance" &&
-      normText(a.leo) === "stage" &&
-      normText(a.sam) === "projector" &&
-      normText(a.maya) === "supply",
-    rubric: [
-      ["nora"],
-      ["entrance", "door"],
-      ["maya"],
-      ["supply"],
-      ["eliminat", "rule", "ruled", "cross", "cannot", "can't", "not at", "remaining", "left over", "only", "instead"],
-    ],
-    hints: [
-      "Cross out every location each person cannot occupy.",
-      "Nora cannot be at the stage, the supply area or the projector table.",
-      "Once Nora and Maya are placed, use the one-person-per-place rule for Leo and Sam.",
-    ],
-  },
-  4: {
-    check: (a) => normLetters(a.place) === "SUPPLYCABINET",
-    rubric: [
-      ["first letter", "first letters", "first character", "initial", "1st letter", "starting letter", "begin", "beginning", "start of each", "acrostic"],
-      ["line", "each line", "every line", "sentence", "downward", "vertical", "vertically", "read down", "going down"],
-    ],
-    hints: [
-      "Use the separate clue about where a sentence begins.",
-      "Look at the first character of each line.",
-      "Read the first letters vertically and separate the two words.",
-    ],
-  },
-  5: {
-    check: (a) => normKey(a.code) === "ORBIT27",
-    rubric: [
-      ["discover"],
-      ["design"],
-      ["test"],
-      ["share"],
-      ["reflect"],
-      ["before", "after", "then", "first", "last", "follows", "followed", "depends", "comes", "precede", "next", "order"],
-    ],
-    hints: [
-      "The memo describes which stages depend on earlier stages.",
-      "Design follows discovery; testing follows design; sharing follows testing.",
-      "Reflection comes after sharing. Then read the letters and add the numbers.",
-    ],
-  },
+// Server-only solutions and rubrics. Never import from a client component.
+import {hasAny,normKey,normLetters,normText,normTime} from "./grade";
+export const HINT_COST=15;
+export const ANSWER_POINTS=60;
+export const REASON_POINTS=40;
+export const FIELD_POINTS=12;
+export const REPORT_TEXT_POINTS=14;
+export const VERIFY_POINTS=50;
+export type Answers=Record<string,string>;
+export type Rubric=string[][];
+interface PuzzleKey {check:(a:Answers)=>boolean;rubric:Rubric;hints:[string,string,string]}
+const same=(value:unknown,expected:string)=>normText(value)===normText(expected);
+const blue=(value:unknown)=>["الأزرق","الزرقاء","ازرق","زرقاء","العلبة الزرقاء","العلبه الزرقه","زرقه"].some(s=>normLetters(value)===normLetters(s));
+const cupboard=(value:unknown)=>["خزانة الكوجينة","خزانه الكوجينه","خزانة المطبخ","خزانة الكوجينا"].some(s=>normText(value)===normText(s));
+export const PUZZLE_KEYS:Record<number,PuzzleKey>={
+  1:{check:a=>normTime(a.check)==="18:20"&&normTime(a.sighting)==="18:12",rubric:[
+    ["18:20","1820","ثمانيه","ثمانية","تفقيده"],["18:12","1812","عزه","شافت","رويه"],["ما تثبتش","ما تعدش","ما تفقدش","موش دليل","المفتاح وحدو","ما شملتش"],
+  ],hints:["ابدا من ١٨:٠٠ وزيد المدّة متاع كل حدث.","فرّق بين وقت عزة شافت المفتاح ووقت اللي تكتبت ورقة التفقيدة.","رجوع سليمان بعد ١٢ دقيقة، والتفقيدة بعد رجوعو بثمانية دقايق."]},
+  2:{check:a=>blue(a.word),rubric:[
+    ["خبز","زوز","2"],["4000","اربعه الاف","اربع الاف"],["1000","الف"],["الأزرق","الزرقاء","ازرق","زرقاء","الزرقاء","زرقه"],
+  ],hints:["ما تنساش اللي الخبز فيه زوز وحدات.","احسب ثمن القفة الكلّ وبعد انقصو من خمسة آلاف مليم.","القفة بأربعة آلاف والباقي ألف. لوّج على ألف في جدول الألوان."]},
+  3:{check:a=>same(a.azza,"باب الدار")&&same(a.slimane,"الصالة")&&same(a.fadhila,"السطح")&&same(a.sboui,"الكوجينة"),rubric:[
+    ["عزه","باب"],["السبوعي","سبوعي","كوجينه"],["فضيله","سطح"],["سليمان","الصاله","بلاصة","بلاصه","استبعاد"],
+  ],hints:["اشطب البلايص اللي مستحيلة لكل شخص.","عزة عندها ثلاث بلايص مستحيلة، يعني تقعد بلاصة وحدة.","بعد ما تحدّد عزة، ركّز على السبوعي وبعدها فضيلة؛ سليمان ياخو البلاصة اللي تبقى."]},
+  4:{check:a=>cupboard(a.place),rubric:[
+    ["مدخل"],["خانه","مربع","خطوه"],["يسار","لفوق","لتحت","يمين","مسار"],["خزانه"],
+  ],hints:["عيّن المدخل قبل ما تتبع التعليمات.","كل حركة تنقلك لخانة ملاصقة، موش لسطر كامل ولا لجهة بالحدس.","بعد رابع حركة تكون في بيت الماء. اتبع آخر حركة وحدها باش تعرف النهاية."]},
+  5:{check:a=>normKey(a.code)==="371",rubric:[
+    ["650","نحيت","حذفت","ستة","سته","صفر"],["ثلاثه","الثلاثه","3"],["اربعه","الاربعه","4"],["الثالثه","الاولي","الخانات","خانات"],["سبعه","السبعه","7","وسط"],
+  ],hints:["ابدا بالمحاولة اللي تقول حتى رقم موش موجود.","قارن بلاصة الأربعة في ٤٠١ و٤٢٧؛ الزوز التعليمات ما ينجمواش يصحّوا كان الأربعة موجودة.","الواحد في الخانة الثالثة، والثلاثة موش في الثانية ولا الثالثة. استعمل ٤٢٧ باش تكمل الوسط."]},
 };
-
-// Final report: structured fields are exact; written answers use rubrics.
-export const REPORT_FIELD_CHECKS: Record<string, (v: string) => boolean> = {
-  who: (v) => hasAny(v, ["maya"]),
-  folder: (v) => hasAny(v, ["blue"]),
-  place: (v) => hasAny(v, ["supply"]) && hasAny(v, ["cabinet"]),
-  check: (v) => normTime(v) === "10:20",
-  sighting: (v) => normTime(v) === "10:12",
-  key: (v) => normKey(v) === "ORBIT27",
+export const REPORT_FIELD_CHECKS:Record<string,(v:string)=>boolean>={
+  who:v=>["السبوعي","سبوعي"].some(s=>same(v,s)),folder:blue,place:cupboard,
+  check:v=>normTime(v)==="18:20",sighting:v=>normTime(v)==="18:12",key:v=>normKey(v)==="371",
 };
-
-export const REPORT_TEXT_RUBRICS: Record<string, { max: number; rubric: Rubric }> = {
-  evidence: {
-    max: REPORT_TEXT_POINTS,
-    rubric: [
-      ["10:12", "1012", "sighting", "saw", "seen"],
-      ["10:20", "room check", "room-check", "signed", "counted", "count"],
-      ["blue", "folder", "orbit", "note", "supply", "cabinet", "logic", "grid", "first letter", "acrostic", "maya"],
-    ],
-  },
-  noprove: {
-    max: REPORT_TEXT_POINTS,
-    rubric: [
-      ["not", "doesn't", "does not", "cannot", "can't", "no"],
-      ["key", "present", "there", "on the desk", "counted", "individually", "physically"],
-    ],
-  },
-  verify: {
-    max: VERIFY_POINTS,
-    rubric: [
-      ["no", "not", "cannot", "can't"],
-      ["counted", "count", "individually", "individual", "checked the key"],
-      ["room check", "room-check", "signed", "signature", "sheet", "recorded"],
-    ],
-  },
+export const REPORT_TEXT_RUBRICS:Record<string,{max:number;rubric:Rubric}>={
+  evidence:{max:REPORT_TEXT_POINTS,rubric:[["18:12","1812","عزه","شافت"],["تفقيده","18:20","ما تثبتش"],["العلبه","خزانه","مسار","السبوعي","كوجينه"]]},
+  noprove:{max:REPORT_TEXT_POINTS,rubric:[["لا","موش","ما تثبتش","ما ينجمش","ما تثبت","ما شملتش"],["مفتاح","حاضر","موجود","وحدو","تفقد"]]},
+  verify:{max:VERIFY_POINTS,rubric:[["لا","موش","ما تثبتش","ما يكفيش","ما تكفيش"],["مفتاح","وحدو","تفقد","تعد"],["تفقيده","ورقه","الضو","الباب","الكراسي"]]},
 };
-
-export const REVEAL = {
-  note:
-    "I hid the presentation key in the blue folder inside the supply cabinet at 10:20. I was worried the showcase team would use an outdated presentation. I planned to return it after someone checked the materials. I should have told the club lead instead of hiding it. (Maya)",
-  summary: [
-    "The last confirmed sighting was at 10:12.",
-    "The 10:20 room check did not count the key individually.",
-    "The supported evidence cards spelled BLUE.",
-    "The logic grid placed Maya in the supply area.",
-    "The hidden message gave SUPPLY CABINET.",
-    "The process cards rebuilt the key: ORBIT-27.",
-  ],
+export const REVEAL={
+  note:"يا جماعة، أنا خبّيت مفتاح السطح في العلبة الزرقاء وحطّيتها في خزانة الكوجينة. كنت نحضّر مفاجأة للسهرية وما حبيتش حتى حد يطلع قبل ما نكمّل. قلت نرجّعو قبل ما تتفطّنوا، أما تلهّيت ونسيت. كان يلزمني نقول لواحد منكم موش نخلّي الدار الكلّ تقلّب. سامحوني، المرّة الجاية نكتب وين حطّيتو! — السبوعي",
+  summary:["آخر رؤية مباشرة للمفتاح كانت على ١٨:١٢، بشهادة عزة.","تفقيدة ١٨:٢٠ تخصّ الضو والباب والكراسي، والمفتاح ما تفقدش وحدو.","ثمن القفة أربعة آلاف مليم والباقي ألف، يعني العلبة زرقاء.","القرائن تحطّ عزة عند الباب وسليمان في الصالة وفضيلة فوق السطح والسبوعي في الكوجينة.","المسار يوصّل لخزانة الكوجينة، ورمز القفل هو ٣٧١.","قبل الرسالة، هاذم قرائن ترجّح دور السبوعي. الرسالة هي اللي تأكّد التخبية، من غير ما تحدّد وقتها بالضبط."],
 };

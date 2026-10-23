@@ -7,15 +7,15 @@ import { getEnv, getEvent, json, phaseOf, teamFromRequest, readJson } from "@/li
 export async function POST(req: NextRequest) {
   const env = await getEnv();
   const team = await teamFromRequest(req, env);
-  if (!team) return json({ error: "not_joined" }, 401);
+  if (!team) return json({ error: "يلزم تدخل لفريقك." }, 401);
 
   const now = Date.now();
   const { phase } = phaseOf(await getEvent(env), env, now);
-  if (phase !== "investigation" && phase !== "final") return json({ error: "Report submissions are closed." }, 409);
-  if (team.finished_at) return json({ error: "Your report is already submitted." }, 409);
+  if (phase !== "investigation" && phase !== "final") return json({ error: "إرسال التقارير تسكّر." }, 409);
+  if (team.finished_at) return json({ error: "تقريركم تبعث قبل." }, 409);
 
   const solvedRow = await env.DB.prepare("SELECT COUNT(*) AS c FROM solves WHERE team_id = ?").bind(team.id).first<{ c: number }>();
-  if ((solvedRow?.c ?? 0) < PUZZLE_COUNT) return json({ error: "Solve all five puzzles first." }, 409);
+  if ((solvedRow?.c ?? 0) < PUZZLE_COUNT) return json({ error: "حلّوا الألغاز الخمسة قبل." }, 409);
 
   const body = await readJson(req);
   const fields = (body.fields ?? {}) as Record<string, unknown>;
@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
   const fieldKeys = Object.keys(REPORT_FIELD_CHECKS);
   const textKeys = Object.keys(REPORT_TEXT_RUBRICS);
   if ([...fieldKeys, ...textKeys].some((k) => !val(k))) {
-    return json({ error: "Answer every question before submitting the report." }, 400);
+    return json({ error: "جاوبوا على الأسئلة الكلّ قبل ما تبعثوا التقرير." }, 400);
   }
 
   const ins = "INSERT OR IGNORE INTO graded (team_id, item, kind, text, max_points, auto_points, at) VALUES (?, ?, ?, ?, ?, ?, ?)";

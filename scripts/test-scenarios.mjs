@@ -63,15 +63,15 @@ await request('/api/hint', { cookie: teams[5].cookie, body: { puzzle: 1 }, statu
 await request('/api/hint', { cookie: teams[4].cookie, body: { puzzle: 1 } });
 await pause();
 const puzzles = [
-  [{ check: '10h20', sighting: '10:12 am' }, 'The signed room check at 10:20 did not count the key; it was not counted. The last sighting saw it physically at 10:12.'],
-  [{ word: 'blue' }, 'The unsigned anonymous claim has no witness or verified source and does not prove anything; it is unsupported.'],
-  [{ nora: 'entrance', leo: 'stage', sam: 'projector', maya: 'supply' }, 'Nora is at the entrance. Maya is at supply. Eliminate the remaining locations by the one person rule.'],
-  [{ place: 'Supply-Cabinet' }, 'Read the first letters of each line vertically; this is an acrostic.'],
-  [{ code: 'orbit-27' }, 'Discover first, then design, then test, then share, then reflect last in this order.'],
+  [{ check: '١٨:٢٠', sighting: '18:12' }, 'تفقيدة 18:20 ما تثبتش وجود المفتاح وحدو. عزة شافت المفتاح على 18:12.'],
+  [{ word: 'أزرق' }, 'زوز خبز والقفة 4000 والباقي 1000 يعني العلبة الزرقاء.'],
+  [{ azza: 'باب الدار', slimane: 'الصالة', fadhila: 'السطح', sboui: 'الكوجينة' }, 'عزة عند الباب والسبوعي في الكوجينة وفضيلة في السطح وسليمان في الصالة بالاستبعاد.'],
+  [{ place: 'خزانة الكوجينة' }, 'نبدا من المدخل ونتحرك خانة لتحت ويسار حسب المسار حتى خزانة الكوجينة.'],
+  [{ code: '٣٧١' }, 'حذفت 650 ونحيت الاربعة. الثلاثة في الاولى والواحد في الثالثة والسبعة في الوسط والخانات مختلفة.'],
 ];
 await Promise.all(teams.map(async (team, index) => {
  for (let i=0; i<puzzles.length; i++) {
-   if (i === 1) await request('/api/submit', { cookie: team.cookie, body: { puzzle: 2, answers: { word: 'BLUE' } }, status: 400 });
+   if (i === 1) await request('/api/submit', { cookie: team.cookie, body: { puzzle: 2, answers: { word: 'أزرق' } }, status: 400 });
    const [answers, explanation] = puzzles[i];
    const result = await request('/api/submit', { cookie: team.cookie, body: { puzzle: i+1, answers, explanation } });
    assert.equal(result.data.ok, true);
@@ -83,10 +83,10 @@ await Promise.all(teams.map(async (team, index) => {
  }
  await request('/api/report', { cookie: team.cookie, body: { fields: {} }, status: 400 });
  await request('/api/report', { cookie: team.cookie, body: { fields: {
-   who: 'Maya', folder: 'blue', place: 'supply cabinet', check: '10:20', sighting: '10:12', key: 'ORBIT-27',
-   evidence: 'The 10:12 sighting saw the key; the 10:20 signed room check and blue folder, logic grid and cabinet identify Maya.',
-   noprove: 'It does not prove the key was physically present or individually counted.',
-   verify: 'No, the key was not individually counted; the room check sheet was signed and recorded.'
+   who: 'السبوعي', folder: 'العلبة الزرقاء', place: 'خزانة الكوجينة', check: '١٨:٢٠', sighting: '١٨:١٢', key: '٣٧١',
+   evidence: 'عزة شافت المفتاح على 18:12 والتفقيدة على 18:20 ما تثبتش وجودو. العلبة والمسار لخزانة الكوجينة يرجحوا السبوعي.',
+   noprove: 'لا، ما تثبتش المفتاح كان موجود ولا تفقد وحدو.',
+   verify: 'لا، المفتاح ما تفقدش وحدو. ورقة التفقيدة تخص الضو والباب والكراسي.'
  } } });
  await request('/api/report', { cookie: team.cookie, body: {}, status: 409 });
  const state = (await request('/api/state', { cookie: team.cookie })).data;
@@ -96,7 +96,7 @@ await action('review', { teamId: teams[0].id, item: 'p1', points: 35 });
 assert.equal((await overview()).review.find(r=>r.teamId===teams[0].id && r.item==='p1').admin,35);
 await action('review', { teamId: teams[0].id, item: 'p1', points: null });
 await action('review', { teamId: teams[0].id, item: 'missing', points: 1 },404);
-await action('rename', { teamId: teams[0].id, name: 'Test Team 1 — Champions' });
+await action('rename', { teamId: teams[0].id, name: 'فريق التجربة الفايز' });
 await action('reveal');
 assert.ok((await request('/api/state', { cookie:first })).data.reveal);
 await action('lock');
