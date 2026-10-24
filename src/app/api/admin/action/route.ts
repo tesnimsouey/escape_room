@@ -21,8 +21,19 @@ export async function POST(req: NextRequest) {
     case "start":
       await db.prepare("UPDATE event SET started_at = ?, locked = 0 WHERE id = 1 AND started_at IS NULL").bind(now).run();
       break;
+    case "addTime": {
+      const minutes = body?.minutes;
+      if (typeof minutes !== "number" || !Number.isInteger(minutes) || minutes < 1 || minutes > 60)
+        return json({ error: "اختار عدد صحيح من 1 إلى 60 دقيقة." }, 400);
+      const duration = ((Number(env.INVESTIGATION_MINUTES) || 35) + (Number(env.GRACE_MINUTES) || 5)) * 60_000;
+      // Atomic increments preserve simultaneous additions. If time expired, restart from now.
+      const result = await db.prepare("UPDATE event SET extra_ms = extra_ms + ? + MAX(0, ? - (started_at + ? + extra_ms)) WHERE id = 1 AND started_at IS NOT NULL AND locked = 0 AND revealed = 0")
+        .bind(minutes * 60_000, now, duration).run();
+      if (!result.meta.changes) return json({ error: "يلزم النشاط يكون بدا، والإرسال محلول، والحلّ ما تكشفش. كان سكّرت الإرسال، عاود حلّو قبل ما تزيد الوقت." }, 409);
+      break;
+    }
     case "resetClock":
-      await db.prepare("UPDATE event SET started_at = NULL, locked = 0 WHERE id = 1").run();
+      await db.prepare("UPDATE event SET started_at = NULL, extra_ms = 0, locked = 0 WHERE id = 1").run();
       break;
     case "lock":
     case "unlock":
@@ -71,7 +82,7 @@ export async function POST(req: NextRequest) {
         db.prepare("DELETE FROM hints"),
         db.prepare("DELETE FROM graded"),
         db.prepare("UPDATE teams SET finished_at = NULL"),
-        db.prepare("UPDATE event SET started_at = NULL, locked = 0, revealed = 0 WHERE id = 1"),
+        db.prepare("UPDATE event SET started_at = NULL, extra_ms = 0, locked = 0, revealed = 0 WHERE id = 1"),
       ];
       if (body?.removeTeams) stmts.push(db.prepare("DELETE FROM teams"));
       else if (body?.renewAccess === true) {

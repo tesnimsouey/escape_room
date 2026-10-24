@@ -30,6 +30,7 @@ export default function Admin() {
   const [data, setData] = useState<Overview | null>(null);
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [extraMinutes, setExtraMinutes] = useState(5);
   const [authed, setAuthed] = useState<boolean | null>(null);
   const [tab, setTab] = useState<"live" | "review" | "teams" | "winners">("live");
 
@@ -96,6 +97,12 @@ export default function Admin() {
                 {ev.revealed ? "خبّي رسالة السبوعي" : "اكشف رسالة السبوعي للفرق"}
               </button>
             </div>
+            <div className="row" style={{ marginTop: 16 }}>
+              <label htmlFor="extra-minutes">وقت إضافي بالدقايق</label>
+              <input id="extra-minutes" type="number" dir="ltr" min={1} max={60} step={1} value={extraMinutes} onChange={(e) => setExtraMinutes(Number(e.target.value))} style={{ width: 100 }} />
+              <button className="btn" disabled={busy || !ev.startedAt || ev.locked || ev.revealed || !Number.isInteger(extraMinutes) || extraMinutes < 1 || extraMinutes > 60} onClick={() => run({ action: "addTime", minutes: extraMinutes }, `نزيدوا ${extraMinutes} دقيقة للفرق الكلّ؟ كان الوقت وفى، الإرسال يرجع يتحلّ للمدّة هاذي.`)}>زيد الوقت للفرق الكلّ</button>
+            </div>
+            <p className="muted">الزيادة تظهر وحدها عند الفرق وتحافظ على النقاط والإجابات. كان الوقت وفى، تتحسب الزيادة من توّا. كان سكّرت الإرسال، عاود حلّو أوّل.</p>
             <p className="muted" style={{ marginTop: 12 }}>
               كمّلتوا التجربة؟ <button className="btn ghost small" onClick={() => run({ action: "resetAll" }, "نفسخوا النقاط والمحاولات والتلميحات ونرجّعوا الوقت للبداية؟ الفرق تبقى موجودة.")}>فسّخ معطيات اللعب</button>
             </p>

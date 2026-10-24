@@ -26,6 +26,7 @@ export const cookieOptions = {
 
 export interface EventRow {
   started_at: number | null;
+  extra_ms: number;
   locked: number;
   revealed: number;
 }
@@ -41,8 +42,8 @@ export interface TeamRow {
 }
 
 export async function getEvent(env: CloudflareEnv): Promise<EventRow> {
-  const row = await env.DB.prepare("SELECT started_at, locked, revealed FROM event WHERE id = 1").first<EventRow>();
-  return row ?? { started_at: null, locked: 0, revealed: 0 };
+  const row = await env.DB.prepare("SELECT started_at, extra_ms, locked, revealed FROM event WHERE id = 1").first<EventRow>();
+  return row ?? { started_at: null, extra_ms: 0, locked: 0, revealed: 0 };
 }
 
 export type Phase = "lobby" | "investigation" | "final" | "closed";
@@ -51,13 +52,14 @@ export function phaseOf(ev: EventRow, env: CloudflareEnv, now: number) {
   const inv = (Number(env.INVESTIGATION_MINUTES) || 35) * 60_000;
   const grace = (Number(env.GRACE_MINUTES) || 5) * 60_000;
   const start = ev.started_at;
-  const investigationEnds = start ? start + inv : null;
-  const hardEnd = start ? start + inv + grace : null;
+  const extra = ev.extra_ms ?? 0;
+  const investigationEnds = start ? start + inv + extra : null;
+  const hardEnd = start ? start + inv + extra + grace : null;
   let phase: Phase;
   if (ev.locked) phase = "closed";
   else if (!start) phase = "lobby";
-  else if (now < start + inv) phase = "investigation";
-  else if (now < start + inv + grace) phase = "final";
+  else if (now < start + inv + extra) phase = "investigation";
+  else if (now < start + inv + extra + grace) phase = "final";
   else phase = "closed";
   return { phase, investigationEnds, hardEnd };
 }

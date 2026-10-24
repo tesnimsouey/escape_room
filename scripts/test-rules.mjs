@@ -15,7 +15,7 @@ function load(name) {
 const { phaseOf, rank } = load('server');
 const env = { INVESTIGATION_MINUTES:'35', GRACE_MINUTES:'5' };
 const start = 1_000_000;
-const event = { started_at:start, locked:0, revealed:0 };
+const event = { started_at:start, extra_ms:0, locked:0, revealed:0 };
 for(const [now,phase] of [[start,'investigation'],[start+35*60000-1,'investigation'],[start+35*60000,'final'],[start+40*60000-1,'final'],[start+40*60000,'closed']]) assert.equal(phaseOf(event,env,now).phase,phase);
 assert.equal(phaseOf({...event,started_at:null},env,start).phase,'lobby');
 assert.equal(phaseOf({...event,locked:1},env,start).phase,'closed');
@@ -51,3 +51,11 @@ for(let n=0;n<1000;n++) {
 }
 assert.deepEqual(solutions,['371']);
 console.log('Arabic normalization, fixed RTL map and unique lock solution checks passed.');
+
+const extended={...event,extra_ms:5*60000};
+assert.equal(phaseOf(extended,env,start+35*60000).phase,'investigation');
+assert.equal(phaseOf(extended,env,start+40*60000).phase,'final');
+assert.equal(phaseOf(extended,env,start+45*60000).phase,'closed');
+assert.equal(phaseOf(extended,env,start).hardEnd,start+45*60000);
+assert.equal(extended.started_at,start);
+console.log('Extended deadlines, grace boundaries and unchanged start-time checks passed.');
