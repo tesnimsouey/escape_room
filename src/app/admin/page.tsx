@@ -139,10 +139,16 @@ export default function Admin() {
       {tab === "teams" && (
         <section className="sheet">
           <h2>الفرق والرموز</h2>
+          <p className="muted">إعادة البداية تصفّر النقاط والإجابات والتلميحات وترجّع الفرق لانتظار المضيف. أسماء الفرق والنسخ تبقى كيف ما هي.</p>
+          <div className="row">
+            <button className="btn ghost" disabled={busy} onClick={() => run({ action: "resetAll" }, "نعاودوا اللعبة من البداية ونفسخوا نتائج الجولة؟ رموز الفرق وروابط الدخول تبقى صالحة.")}>عاود اللعبة بنفس الرموز</button>
+            <button className="btn ghost" disabled={busy} onClick={() => run({ action: "resetAll", renewAccess: true }, "نعاودوا اللعبة ونفسخوا نتائج الجولة برموز وروابط جديدة؟ الروابط القديمة تتلغى واللاعبين يلزمهم يعاودوا يدخلوا بالروابط الجديدة.")}>عاود اللعبة برموز وروابط جديدة</button>
+          </div>
+
           <CreateTeams onCreate={(count) => run({ action: "createTeams", count })} />
           <div className="scroll">
             <table className="tbl">
-              <thead><tr><th>الفريق</th><th>Code</th><th>النسخة</th><th>رابط الدخول</th></tr></thead>
+              <thead><tr><th>الفريق</th><th>الرمز</th><th>النسخة</th><th>رابط الدخول</th></tr></thead>
               <tbody>
                 {[...data.teams].sort((a, b) => a.id - b.id).map((t) => (
                   <tr key={t.id}>

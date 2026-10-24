@@ -74,6 +74,13 @@ export async function POST(req: NextRequest) {
         db.prepare("UPDATE event SET started_at = NULL, locked = 0, revealed = 0 WHERE id = 1"),
       ];
       if (body?.removeTeams) stmts.push(db.prepare("DELETE FROM teams"));
+      else if (body?.renewAccess === true) {
+        const { results } = await db.prepare("SELECT id FROM teams").all<{ id: number }>();
+        for (const team of results) {
+          stmts.push(db.prepare("UPDATE teams SET code = ?, token = ? WHERE id = ?")
+            .bind(`T${String(team.id).padStart(2, "0")}-${randomCode(8)}`, crypto.randomUUID(), team.id));
+        }
+      }
       await db.batch(stmts);
       break;
     }
