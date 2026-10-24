@@ -17,16 +17,16 @@ const PLACES = [{ value: "", label: "اختار البلاصة" }, ...["باب �
 const PUZZLES: PuzzleDef[] = [
   {
     id:1, title:"وقتاش ضاع المفتاح", envelope:"الظرف الأوّل وقتاش ضاع المفتاح",
-    story:"الأوقات تخلّطت على الجماعة. استخرجوا وقتاش ضاع المفتاح وآخر مرة شفنا فاها المفتاح . ورقة تفقيدة عامّة موش كيف شهادة واحد شاف المفتاح بعينو.",
+    story:"الأوقات تخلّطت على الجماعة. استخرجوا وقتاش ضاع المفتاح وآخر مرة شفنا فاها المفتاح . ورقة التثبّت العامّة موش كيف شهادة واحد شاف المفتاح بعينو.",
     blocks:[{type:"cards",title:"شنوة صار في الدار",shuffle:true,cards:[
       {id:"p1-slimane",badge:"1",title:"سليمان",text:"خرجت من الدار على 18:00، ورجعت بعد اثناش دقيقة بالضبط."},
       {id:"p1-azza",badge:"2",title:"عزة",text:"كي رجع سليمان، شفت مفتاح السطح بعيني فوق طاولة الصالة. هاذي آخر شهادة مباشرة موجودة في الملف."},
-      {id:"p1-check",badge:"3",title:"ورقة التفقيدة",text:"بعد رجوع سليمان بثمانية دقايق، تكتبت تفقيدة للضو والباب والكراسي. المفتاح ما تذكرش وما تعدّش وحدو."},
-      {id:"p1-fadhila",badge:"4",title:"فضيلة",text:"بعد التفقيدة بخمسة دقايق، جيت باش ناخذ مفتاح السطح من الطاولة وما لقيتوش."},
+      {id:"p1-check",badge:"3",title:"ورقة التثبّت",text:"بعد رجوع سليمان بثمانية دقايق، تسجّل التثبّت للضو والباب والكراسي. المفتاح ما تذكرش وما تعدّش وحدو."},
+      {id:"p1-fadhila",badge:"4",title:"فضيلة",text:"بعد التثبّت بخمسة دقايق، جيت باش ناخذ مفتاح السطح من الطاولة وما لقيتوش."},
       {id:"p1-note",badge:"5",title:"ملاحظة",text:"الأوقات اللي ما هيش مكتوبة بالأرقام تتحسب انطلاقا من خروج سليمان. أوقات الحكاية موش هي ساعة النشاط."},
     ]}],
-    fields:[{key:"check",label:"وقتاش تكتبت التفقيدة",placeholder:"مثال 18:00"},{key:"sighting",label:"وقتاش آخر مرّة تشاف المفتاح مباشرة",placeholder:"ساعة ودقيقة"}],
-    explain:{prompt:"فسّر كيفاش حسبت الوقتين وعلاش التفقيدة موش دليل على وجود المفتاح.",required:false},
+    fields:[{key:"check",label:"وقتاش تسجّل التثبّت",placeholder:"مثال 18:00"},{key:"sighting",label:"وقتاش آخر مرّة تشاف المفتاح مباشرة",placeholder:"ساعة ودقيقة"}],
+    explain:{prompt:"فسّر كيفاش حسبت الوقتين وعلاش التثبّت موش دليل على وجود المفتاح.",required:false},
   },
   {
     id:2,title:"قفة فضيلة",envelope:"الظرف الثاني قفة فضيلة",
@@ -74,12 +74,12 @@ const PUZZLES: PuzzleDef[] = [
 ];
 export const REPORT_FIELDS: Field[] = [
   {key:"who",label:"شكون ترجّح خبّى مفتاح السطح"},{key:"folder",label:"شنوة لون العلبة"},{key:"place",label:"وين العلبة مخبيّة"},
-  {key:"check",label:"وقتاش تكتبت التفقيدة",placeholder:"ساعة ودقيقة"},{key:"sighting",label:"وقتاش آخر رؤية مباشرة للمفتاح",placeholder:"ساعة ودقيقة"},{key:"key",label:"شنوة رمز القفل",placeholder:"ثلاثة أرقام"},
+  {key:"check",label:"وقتاش تسجّل التثبّت",placeholder:"ساعة ودقيقة"},{key:"sighting",label:"وقتاش آخر رؤية مباشرة للمفتاح",placeholder:"ساعة ودقيقة"},{key:"key",label:"شنوة رمز القفل",placeholder:"ثلاثة أرقام"},
 ];
 export const REPORT_TEXT_FIELDS: Field[] = [
   {key:"evidence",label:"شنوة أقوى قرائن عندكم وكيفاش ربطتوهم؟ فسّر في جملتين ولا ثلاثة."},
-  {key:"noprove",label:"شنوة ورقة التفقيدة ما تنجمش تثبت؟"},
-  {key:"verify",label:"تثبّت أخير: ورقة تفقيدة الدار على 18:20 تكفي باش نقولو المفتاح كان حاضر وقتها؟ علاش؟"},
+  {key:"noprove",label:"شنوة ورقة التثبّت ما تنجمش تثبت؟"},
+  {key:"verify",label:"تثبّت أخير: ورقة التثبّت في الدار على 18:20 تكفي باش نقولو المفتاح كان حاضر وقتها؟ علاش؟"},
 ];
 function arrange<T>(variant:Variant,items:T[]):T[]{if(variant==="B")return [...items].reverse();if(variant==="C")return [...items.slice(2),...items.slice(0,2)];return [...items];}
 export function getPuzzle(id:number,variant:Variant):PuzzleDef|null {
