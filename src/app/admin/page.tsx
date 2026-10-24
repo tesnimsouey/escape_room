@@ -139,11 +139,11 @@ export default function Admin() {
       {tab === "teams" && (
         <section className="sheet">
           <h2>الفرق والرموز</h2>
-          <p className="muted">إعادة البداية تصفّر النقاط والإجابات والتلميحات وترجّع الفرق لانتظار المضيف. أسماء الفرق والنسخ تبقى كيف ما هي.</p>
+          <p className="muted">باش تبدأ نشاط جديد من الصفر، فسّخ الفرق ومعطيات اللعب الكلّ، وبعدها اختار عدد الفرق الجديدة واضغط «كوّن الفرق» باش تتحصّل على رموز وروابط دخول جديدة.</p>
           <div className="row">
-            <button className="btn ghost" disabled={busy} onClick={() => run({ action: "resetAll" }, "نعاودوا اللعبة من البداية ونفسخوا نتائج الجولة؟ رموز الفرق وروابط الدخول تبقى صالحة.")}>عاود اللعبة بنفس الرموز</button>
-            <button className="btn ghost" disabled={busy} onClick={() => run({ action: "resetAll", renewAccess: true }, "نعاودوا اللعبة ونفسخوا نتائج الجولة برموز وروابط جديدة؟ الروابط القديمة تتلغى واللاعبين يلزمهم يعاودوا يدخلوا بالروابط الجديدة.")}>عاود اللعبة برموز وروابط جديدة</button>
+            <button className="btn ghost" disabled={busy || data.teams.length === 0} onClick={() => run({ action: "resetAll", removeTeams: true }, "باش نفسخوا الفرق الكلّ وأسماءهم والنقاط والإجابات والمحاولات والتلميحات ونرجّعوا الوقت للبداية. الروابط والجلسات القديمة تتلغى. المسح نهائي وما ينجمش يرجع. متأكد؟")}>فسّخ الفرق ومعطيات اللعب الكلّ</button>
           </div>
+          {data.teams.length === 0 && <p role="status">ما فماش فرق. اختار العدد وكوّن فرق جديدة من هنا.</p>}
 
           <CreateTeams onCreate={(count) => run({ action: "createTeams", count })} />
           <div className="scroll">
