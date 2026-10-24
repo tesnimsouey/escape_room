@@ -4,7 +4,7 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   title: "شوفلي حل وين مشى مفتاح السطح",
-  description: "خمسة ألغاز في حومة شوفلي حل. تبّع القرائن ولقّى مفتاح السطح.",
+  description: "خمسة ألغاز في  شوفلي حل. تبّع التشنشينات ألقى مفتاح السطح.",
   robots: { index: false, follow: false },
 };
 

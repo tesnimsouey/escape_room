@@ -26,7 +26,7 @@ export function EventClock({ event, serverNow }: { event: ClockEvent; serverNow:
   const display = waiting ? "—:—" : `${Math.floor(remaining / 60)}:${String(remaining % 60).padStart(2, "0")}`;
   return <div className={`event-clock${!waiting && !closed && remaining < 300 ? " low" : ""}`}>
     <span className="event-clock-label">{label}</span>
-    <span className="event-clock-value" role="timer" aria-label={label} aria-live="off">{display}</span>
+    <span className="event-clock-value" dir="ltr" lang="en" role="timer" aria-label={label} aria-live="off">{display}</span>
     <small>{waiting ? "المضيف يشغّل الوقت للفرق الكلّ." : event.locked ? "المضيف سكّر الإرسال والوقت ما زال يدور" : closed ? "وقت اللعب وفى." : final ? "المهلة الأخيرة ما زالت محلولة." : "بعدها تبدا المهلة الأخيرة."}</small>
   </div>;
 }

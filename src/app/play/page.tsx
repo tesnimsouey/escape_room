@@ -110,7 +110,7 @@ export default function Play() {
             <small>النقاط {s.score.total}</small>
           </div>
           <div className={`clock${low ? " low" : ""}`} aria-live="off">
-            {clock}
+            <bdi dir="ltr" lang="en" className="time-digits">{clock}</bdi>
             <small>{clockNote}</small>
           </div>
         </div>
@@ -129,7 +129,7 @@ export default function Play() {
 
         {s.stage === "lobby" && (
           <section className="sheet">
-            <h2>ملفّ الحكاية باش يتحلّ قريب</h2>
+            <h2>ملفّ الحكاية باش يتحلّ على قريب</h2>
             <p>{s.intro}</p>
             <p className="muted">دخلتوا باسم {s.team.name}. الصفحة تتحدّث وحدها كي المضيف يشغّل الوقت.</p>
           </section>
@@ -146,7 +146,7 @@ export default function Play() {
               <>
                 <h3>رسالة السبوعي</h3>
                 <ul className="note plain"><li>{s.reveal.note}</li></ul>
-                <h3>شنوة ورّاتنا القرائن</h3>
+                <h3>شنوة ورّاتنا التشنشينات</h3>
                 <ul>{s.reveal.summary.map((l) => <li key={l}>{l}</li>)}</ul>
               </>
             ) : (
@@ -261,7 +261,7 @@ function FieldInput({ f, value, onChange }: { f: Field; value: string; onChange:
           {f.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
       ) : (
-        <input id={id} value={value} onChange={(e) => onChange(e.target.value)} placeholder={f.placeholder} autoComplete="off" maxLength={80} />
+        <input id={id} dir={f.key === "check" || f.key === "sighting" ? "ltr" : undefined} value={value} onChange={(e) => onChange(e.target.value)} placeholder={f.placeholder} autoComplete="off" maxLength={80} />
       )}
     </div>
   );

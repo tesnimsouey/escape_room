@@ -214,3 +214,6 @@ html { direction: rtl; }
   .puzzle-grid th, .puzzle-grid td { padding: 7px 4px; font-size: 13px; }
   .puzzle-table { font-size: 14px; }
 }
+
+/* Keep time digits in Western form while surrounding text stays Tunisian Arabic. */
+.time-digits, .event-clock-value { font-family: Arial, sans-serif; font-variant-numeric: tabular-nums; }
