@@ -217,3 +217,5 @@ html { direction: rtl; }
 
 /* Keep time digits in Western form while surrounding text stays Tunisian Arabic. */
 .time-digits, .event-clock-value { font-family: Arial, sans-serif; font-variant-numeric: tabular-nums; }
+
+.report-hint { margin: 8px 0 0; font-size: 15px; line-height: 1.7; }

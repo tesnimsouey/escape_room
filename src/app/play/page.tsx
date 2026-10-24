@@ -257,12 +257,13 @@ function FieldInput({ f, value, onChange }: { f: Field; value: string; onChange:
     <div>
       <label htmlFor={id}>{f.label}</label>
       {f.options ? (
-        <select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
+        <select id={id} aria-describedby={f.hint ? `${id}-hint` : undefined} value={value} onChange={(e) => onChange(e.target.value)}>
           {f.options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
       ) : (
-        <input id={id} dir={f.key === "check" || f.key === "sighting" ? "ltr" : undefined} value={value} onChange={(e) => onChange(e.target.value)} placeholder={f.placeholder} autoComplete="off" maxLength={80} />
+        <input id={id} aria-describedby={f.hint ? `${id}-hint` : undefined} dir={f.key === "check" || f.key === "sighting" ? "ltr" : undefined} value={value} onChange={(e) => onChange(e.target.value)} placeholder={f.placeholder} autoComplete="off" maxLength={80} />
       )}
+      {f.hint && <p id={`${id}-hint`} className="muted report-hint">تذكير: {f.hint}</p>}
     </div>
   );
 }
@@ -362,12 +363,14 @@ function ReportForm({
     <section className="sheet">
       <h2>التقرير الأخير</h2>
       <p>حلّيتوا الألغاز الخمسة. اكتبوا شنوة صار وراجعوا إجاباتكم مليح؛ التقرير يتبعث مرّة وحدة.</p>
+      <p className="muted">التذكيرات تحت كل سؤال ظاهرة للفرق الكلّ وما تنقص حتى نقطة. تنجموا زادة تراجعوا الظروف المحلولة لتحت.</p>
       <div className="fields">
         {fields.map((f) => <FieldInput key={f.key} f={f} value={vals[f.key] ?? ""} onChange={set(f.key)} />)}
         {textFields.map((f) => (
           <div key={f.key}>
             <label htmlFor={`r-${f.key}`}>{f.label}</label>
-            <textarea id={`r-${f.key}`} value={vals[f.key] ?? ""} onChange={(e) => set(f.key)(e.target.value)} maxLength={700} />
+            <textarea id={`r-${f.key}`} aria-describedby={f.hint ? `r-${f.key}-hint` : undefined} value={vals[f.key] ?? ""} onChange={(e) => set(f.key)(e.target.value)} maxLength={700} />
+            {f.hint && <p id={`r-${f.key}-hint`} className="muted report-hint">تذكير: {f.hint}</p>}
           </div>
         ))}
         {!confirm ? (
